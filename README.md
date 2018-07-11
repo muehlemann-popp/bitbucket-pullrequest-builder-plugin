@@ -1,3 +1,12 @@
+Fork of Bitbucket Pull Request Builder Plugin
+=============================================
+This fork extends base functionality with ability to post useful comments and set detailed statuses for Bitbucket 
+Pull Requests
+
+
+**See original README below**
+
+
 Bitbucket Pull Request Builder Plugin
 =====================================
 

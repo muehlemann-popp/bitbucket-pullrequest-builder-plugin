@@ -35,7 +35,7 @@ import static com.cloudbees.plugins.credentials.CredentialsMatchers.instanceOf;
 public class BitbucketRepository {
     private static final Logger logger = Logger.getLogger(BitbucketRepository.class.getName());
     private static final String BUILD_DESCRIPTION = "%s: %s into %s";
-    private static final String BUILD_REQUEST_DONE_MARKER = "ttp build flag";
+    private static final String BUILD_REQUEST_DONE_MARKER = "recheck process started";
     private static final String BUILD_REQUEST_MARKER_TAG_SINGLE_RX = "\\#[\\w\\-\\d]+";
     private static final String BUILD_REQUEST_MARKER_TAGS_RX = "\\[bid\\:\\s?(.*)\\]";
     /**
@@ -267,7 +267,7 @@ public class BitbucketRepository {
                 }
                 rebuildCommentAvailable &= !hasMyBuildTag;
             }            
-            if (rebuildCommentAvailable) this.postBuildTagInTTPComment(id, "TTP build flag", buildKeyPart);
+            if (rebuildCommentAvailable) this.postBuildTagInTTPComment(id, "Recheck process started", buildKeyPart);
 
             final boolean canBuildTarget = rebuildCommentAvailable || !commitAlreadyBeenProcessed;
             logger.log(Level.FINE, "Build target? {0} [rebuild:{1} processed:{2}]", new Object[]{ canBuildTarget, rebuildCommentAvailable, commitAlreadyBeenProcessed});
@@ -342,5 +342,13 @@ public class BitbucketRepository {
                         CredentialsProvider.lookupCredentials(StandardUsernamePasswordCredentials.class),
                         CredentialsMatchers.allOf(CredentialsMatchers.withId(credentialsId),
                                 instanceOf(UsernamePasswordCredentials.class)));
+    }
+
+    public void postPullRequestComment(String pullRequestId, String content) {
+        logger.log(
+                Level.FINE,
+                "Post PR comment: {0} with content {1}",
+                new Object[]{content, this.client.postPullRequestComment(pullRequestId, content).getId()}
+        );
     }
 }

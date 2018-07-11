@@ -1,5 +1,6 @@
 package bitbucketpullrequestbuilder.bitbucketpullrequestbuilder;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.model.AbstractBuild;
 import hudson.model.Job;
@@ -10,6 +11,7 @@ import hudson.triggers.Trigger;
 import jenkins.model.ParameterizedJobMixIn;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -33,7 +35,21 @@ public class BitbucketBuildListener extends RunListener<Run<?, ?>> {
         logger.fine("BitbucketBuildListener onCompleted called.");
         BitbucketBuilds builds = builds(r);
         if (builds != null) {
-            builds.onCompleted((BitbucketCause) r.getCause(BitbucketCause.class), r.getResult(), r.getUrl());
+            EnvVars envVars = null;
+            try {
+                envVars = r.getEnvironment(listener);
+            } catch (IOException | InterruptedException e) {
+                logger.fine("BitbucketBuildListener cannot retrieve environment variables.");
+            }
+
+            BuildResult buildResult = (new BuildResultLoader(envVars)).getBuildResult();
+
+            builds.onCompleted(
+                    (BitbucketCause) r.getCause(BitbucketCause.class),
+                    r.getResult(),
+                    r.getUrl(),
+                    buildResult
+            );
         }
     }
 

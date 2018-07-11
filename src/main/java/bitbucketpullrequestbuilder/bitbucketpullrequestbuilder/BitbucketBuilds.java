@@ -32,7 +32,7 @@ public class BitbucketBuilds {
         }
     }
 
-    void onCompleted(BitbucketCause cause, Result result, String buildUrl) {
+    void onCompleted(BitbucketCause cause, Result result, String buildUrl, BuildResult buildResult) {
         if (cause == null) {
             return;
         }
@@ -44,6 +44,13 @@ public class BitbucketBuilds {
             buildUrl = rootUrl + buildUrl;
             BuildState state = result == Result.SUCCESS ? BuildState.SUCCESSFUL : BuildState.FAILED;
             repository.setBuildStatus(cause, state, buildUrl);
+        }
+
+        logger.fine("Bitbucket comment handling");
+        logger.fine("comment_required: " + buildResult.comment_required);
+        if (buildResult.comment_required) {
+            logger.fine("markdown: " + buildResult.markdown);
+            this.repository.postPullRequestComment(cause.getPullRequestId(), buildResult.markdown);
         }
 
         if (this.trigger.getApproveIfSuccess() && result == Result.SUCCESS) {
