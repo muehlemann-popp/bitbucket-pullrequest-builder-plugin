@@ -207,14 +207,14 @@ public class BitbucketBuildFilterTest {
       "",      
       "Hello from mock",
       "Jenkins: test this please",
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970]",
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970]",
       "check",
-      "",      
+      "",
       "Hello from mock",
       "Jenkins: test this please",
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970]",
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo]",
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo #jenkins-bar]",
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970]",
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo]",
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo #jenkins-bar]",
     }) {
       Pullrequest.Comment comment = EasyMock.createNiceMock(Pullrequest.Comment.class);
       EasyMock.expect(comment.getContent()).andReturn(commentContent).anyTimes();
@@ -222,41 +222,41 @@ public class BitbucketBuildFilterTest {
       EasyMock.replay(comment);
       comments.add(comment);
     }
-    
+
     // Check twice
     assertEquals("check", comments.get(0).getContent());
     assertEquals("check", comments.get(0).getContent());
-    
+
     assertEquals("Hello from mock", comments.get(2).getContent());
-    
+
     BitbucketRepository repo = new BitbucketRepository("", builder);
-    repo.init(EasyMock.createNiceMock(ApiClient.class));    
-    
+    repo.init(EasyMock.createNiceMock(ApiClient.class));
+
     List<Pullrequest.Comment> filteredComments = repo.filterPullRequestComments(comments);
-        
+
     assertTrue(filteredComments.size() == 4);
     assertEquals("Jenkins: test this please", filteredComments.get(filteredComments.size() - 1).getContent());
   }
-  
+
   @Test
   @WithoutJenkins
   public void checkHashMyBuildTagTrue() {
-    BitbucketPullRequestsBuilder builder = EasyMock.createMock(BitbucketPullRequestsBuilder.class); 
+    BitbucketPullRequestsBuilder builder = EasyMock.createMock(BitbucketPullRequestsBuilder.class);
     EasyMock.expect(builder.getTrigger()).andReturn(null).anyTimes();
     EasyMock.replay(builder);
-    
-    IMockBuilder<BitbucketRepository> repoBuilder = EasyMock.partialMockBuilder(BitbucketRepository.class);    
+
+    IMockBuilder<BitbucketRepository> repoBuilder = EasyMock.partialMockBuilder(BitbucketRepository.class);
     repoBuilder.addMockedMethod("getMyBuildTag");
-    BitbucketRepository repo = repoBuilder.createMock();       
-    EasyMock.expect(repo.getMyBuildTag(EasyMock.anyString())).andReturn("#jenkins-902f259e962ff16100843123480a0970").anyTimes();   
+    BitbucketRepository repo = repoBuilder.createMock();
+    EasyMock.expect(repo.getMyBuildTag(EasyMock.anyString())).andReturn("#jenkins-902f259e962ff16100843123480a0970").anyTimes();
     EasyMock.replay(repo);
-    
+
     List<Pullrequest.Comment> comments = new LinkedList<Pullrequest.Comment>();
-    for(String commentContent : new String[] { 
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970]",
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo]",
-      "TTP build flag [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo #jenkins-bar]",
-      "TTP build flag ```[bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo #jenkins-bar]```",
+    for(String commentContent : new String[] {
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970]",
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo]",
+      "Recheck process started [bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo #jenkins-bar]",
+      "Recheck process started ```[bid: #jenkins-902f259e962ff16100843123480a0970 #jenkins-foo #jenkins-bar]```",
     }) {
       Pullrequest.Comment comment = EasyMock.createNiceMock(Pullrequest.Comment.class);
       EasyMock.expect(comment.getContent()).andReturn(commentContent).anyTimes();
@@ -264,35 +264,35 @@ public class BitbucketBuildFilterTest {
       EasyMock.replay(comment);
       comments.add(comment);
     }
-    
+
     String myBuildKey = "902f259e962ff16100843123480a0970";
     for(Pullrequest.Comment comment : comments)
       assertTrue(repo.hasMyBuildTagInTTPComment(comment.getContent(), myBuildKey));
   }
-  
+
   @Test
   @WithoutJenkins
   public void checkHashMyBuildTagFalse() {
-    BitbucketPullRequestsBuilder builder = EasyMock.createMock(BitbucketPullRequestsBuilder.class); 
+    BitbucketPullRequestsBuilder builder = EasyMock.createMock(BitbucketPullRequestsBuilder.class);
     EasyMock.expect(builder.getTrigger()).andReturn(null).anyTimes();
     EasyMock.replay(builder);
-    
-    IMockBuilder<BitbucketRepository> repoBuilder = EasyMock.partialMockBuilder(BitbucketRepository.class);    
+
+    IMockBuilder<BitbucketRepository> repoBuilder = EasyMock.partialMockBuilder(BitbucketRepository.class);
     repoBuilder.addMockedMethod("getMyBuildTag");
-    BitbucketRepository repo = repoBuilder.createMock();       
-    EasyMock.expect(repo.getMyBuildTag(EasyMock.anyString())).andReturn("#jenkins-902f259e962ff16100843123480a0970").anyTimes();   
+    BitbucketRepository repo = repoBuilder.createMock();
+    EasyMock.expect(repo.getMyBuildTag(EasyMock.anyString())).andReturn("#jenkins-902f259e962ff16100843123480a0970").anyTimes();
     EasyMock.replay(repo);
-    
+
     List<Pullrequest.Comment> comments = new LinkedList<Pullrequest.Comment>();
-    for(String commentContent : new String[] { 
+    for(String commentContent : new String[] {
       "check",
-      "",      
+      "",
       "Hello from mock",
       "Jenkins: test this please",
-      "TTP build flag [bid: #jenkins]",
-      "TTP build flag [bid: #jenkins-foo]",
-      "TTP build flag [bid: #jenkins-foo #jenkins-bar]",
-      "TTP build flag ```[bid: #jenkins-foo #jenkins-bar]```",
+      "Recheck process started [bid: #jenkins]",
+      "Recheck process started [bid: #jenkins-foo]",
+      "Recheck process started [bid: #jenkins-foo #jenkins-bar]",
+      "Recheck process started ```[bid: #jenkins-foo #jenkins-bar]```",
     }) {
       Pullrequest.Comment comment = EasyMock.createNiceMock(Pullrequest.Comment.class);
       EasyMock.expect(comment.getContent()).andReturn(commentContent).anyTimes();
