@@ -48,7 +48,7 @@ public class BitbucketBuilds {
 
         logger.fine("Bitbucket comment handling");
         logger.fine("comment_required: " + buildResult.comment_required);
-        if (buildResult.comment_required) {
+        if (buildResult.comment_required != null && buildResult.comment_required) {
             logger.fine("markdown: " + buildResult.markdown);
             this.repository.postPullRequestComment(cause.getPullRequestId(), buildResult.markdown);
         }
