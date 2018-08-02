@@ -47,17 +47,17 @@ class BuildResultLoader {
                 logger.fine("BitbucketBuildListener BuildResult content string length: " + fileContent.length());
 
                 buildResult = objectMapper.readValue(fileContent, BuildResult.class);
+            }
 
-                // check build number
-                Integer buildNumber = Integer.valueOf(env.get("BUILD_NUMBER"));
+            // check build number
+            Integer buildNumber = Integer.valueOf(env.get("BUILD_NUMBER"));
 
-                logger.fine(
-                        "BitbucketBuildListener BUILD_NUMBER: " + buildNumber + "; in result: " + buildResult.build_number
-                );
+            logger.fine(
+                    "BitbucketBuildListener BUILD_NUMBER: " + buildNumber + "; in result: " + buildResult.build_number
+            );
 
-                if (!buildNumber.equals(buildResult.build_number)) {
-                    logger.fine("BitbucketBuildListener wrong build triggers buildResult reset");
-                }
+            if (!buildNumber.equals(buildResult.build_number)) {
+                logger.fine("BitbucketBuildListener wrong build triggers buildResult reset");
             }
         } catch (Exception e) {
             logger.fine(e.getMessage());
