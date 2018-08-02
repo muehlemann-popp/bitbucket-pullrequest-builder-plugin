@@ -3,12 +3,9 @@ package bitbucketpullrequestbuilder.bitbucketpullrequestbuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hudson.EnvVars;
 import hudson.FilePath;
-import hudson.model.Run;
 import jenkins.model.Jenkins;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -17,8 +14,8 @@ class BuildResultLoader {
     private BuildResult buildResult;
     private static final String resultFileName = "ci_bitbucket_comment.json";
 
-    BuildResultLoader(Run r, EnvVars env) {
-        File file = null;
+    BuildResultLoader(EnvVars env) {
+        File file;
         if (env == null) {
             return;
         }
@@ -50,6 +47,17 @@ class BuildResultLoader {
                 logger.fine("BitbucketBuildListener BuildResult content string length: " + fileContent.length());
 
                 buildResult = objectMapper.readValue(fileContent, BuildResult.class);
+
+                // check build number
+                Integer buildNumber = Integer.valueOf(env.get("BUILD_NUMBER"));
+
+                logger.fine(
+                        "BitbucketBuildListener BUILD_NUMBER: " + buildNumber + "; in result: " + buildResult.build_number
+                );
+
+                if (!buildNumber.equals(buildResult.build_number)) {
+                    logger.fine("BitbucketBuildListener wrong build triggers buildResult reset");
+                }
             }
         } catch (Exception e) {
             logger.fine(e.getMessage());
