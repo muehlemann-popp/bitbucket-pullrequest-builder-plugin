@@ -42,7 +42,7 @@ public class BitbucketBuildListener extends RunListener<Run<?, ?>> {
                 logger.fine("BitbucketBuildListener cannot retrieve environment variables.");
             }
 
-            BuildResult buildResult = (new BuildResultLoader(r, envVars)).getBuildResult();
+            BuildResult buildResult = (new BuildResultLoader(envVars)).getBuildResult();
 
             builds.onCompleted(
                     (BitbucketCause) r.getCause(BitbucketCause.class),
